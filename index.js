@@ -4,13 +4,14 @@ const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
 
+app.use(express.static('build'))
 app.use(cors())
 app.use(express.json())
 morgan.token('body', function (req, res) { return JSON.stringify(req.body) })
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 
-let phoneNumbers = [ {id: 1, name: 'miika', number: 123123}, {id:2 , name: 'otso', number: '$$$44€€'} ]
+let phoneNumbers = [ {id: 1, name: 'miika', number: 123123}, {id:2 , name: 'otso', number: '$$$44€€'}, {id:3, name: 'badger', number: '69696969699'} ]
 
 app.get('/api/persons', (req, res) => {
     res.json(phoneNumbers)
