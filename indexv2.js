@@ -12,40 +12,41 @@ app.use(express.static('build'))
 app.use(morgan('tiny'))
 app.use(bodyParser.json())
 
-app.get('/api/persons', (req,res, next) => {
+app.get('/api/persons', (req, res, next) => {
     contactModule.getContacts()
-        .then(contacts => {res.json(contacts)})
+        .then(contacts => { res.json(contacts) })
         .catch(error => next(error))
 })
 
-app.get('/info', (req,res,next) => {
+app.get('/info', (req, res, next) => {
 
     contactModule.getContacts()
         .then(contacts => {
-        res.send(`<p>Phonebook has info of ${contacts.length} people</p>
+            res.send(`<p>Phonebook has info of ${contacts.length} people</p>
         <p>${new Date()}</p>`
-        )})
+            )
+        })
         .catch(error => next(error))
 })
 
 app.post('/api/persons', (req, res, next) => {
-    const {name, number} = req.body
-    
+    const { name, number } = req.body
+
     if (!number && parseInt(number) !== 0) {
-        res.status(409).json({error: 'Phone number must be included'})
+        res.status(409).json({ error: 'Phone number must be included' })
     }
     if (!name) {
-        res.status(409).json({error: 'Name must be included'})
+        res.status(409).json({ error: 'Name must be included' })
     }
-    
+
 
     const newContact = { name: name, number: number }
     contactModule.saveContact(newContact)
-        .then(mongoresponse  => {res.json(mongoresponse)})
+        .then(mongoresponse => { res.json(mongoresponse) })
         .catch(error => next(error))
 })
 
-app.get('/api/persons/:id', (req,res,next) => {
+app.get('/api/persons/:id', (req, res, next) => {
     const { id } = req.params
     contactModule.getContact(id)
         .then(responseContact => {
@@ -54,10 +55,10 @@ app.get('/api/persons/:id', (req,res,next) => {
         .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (req,res, next) => {
+app.delete('/api/persons/:id', (req, res, next) => {
     const { id } = req.params
     contactModule.deleteContact(id)
-        .then(result => {
+        .then(() => {
             res.status(204).end()
         })
         .catch(error => next(error))
@@ -65,7 +66,7 @@ app.delete('/api/persons/:id', (req,res, next) => {
 
 app.put('/api/persons/:id', (req, res, next) => {
     const { id } = req.params
-    const { name, number} = req.body
+    const { name, number } = req.body
 
     contactModule.updateContact(id, name, number)
         .then(responseContact => {
